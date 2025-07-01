@@ -1,73 +1,157 @@
-# Welcome to your Lovable project
+# 부모-아이 약속 서비스 기획서
 
-## Project info
+## 📌 서비스 개요
+부모와 아이 간의 약속을 체계적으로 관리하고, 약속 이행을 통해 가족 간 신뢰를 구축하는 웹 서비스
 
-**URL**: https://lovable.dev/projects/59a961fa-9527-4400-ba77-f67457a532b5
+---
 
-## How can I edit this code?
+## 👥 페르소나
 
-There are several ways of editing your application.
+### 1. 주 사용자: 바쁜 워킹맘 - 김수진 (35세)
+- **직업**: 회사원 (마케팅팀 과장)
+- **가족 구성**: 남편, 초등학교 3학년 아들 (9세)
+- **라이프스타일**: 평일 야근 빈번, 주말에 아이와 시간 보내려 노력
+- **목표**: 아이와의 약속을 체계적으로 관리하여 신뢰 관계 구축
+- **니즈**: 
+  - 바쁜 일상 속에서도 아이와의 약속을 잊지 않고 지키고 싶음
+  - 아이의 집안일, 숙제 등을 동기부여할 수 있는 보상 시스템 필요
+  - 약속 이행 여부를 객관적으로 확인할 수 있는 도구 필요
+- **페인 포인트**: 
+  - 약속을 깜빡하거나 지키지 못해 아이가 실망하는 경우가 빈번
+  - 아이의 행동 변화를 이끌어내기 위한 적절한 보상/페널티 설정의 어려움
 
-**Use Lovable**
+### 2. 부 사용자: 초등학생 - 김민준 (9세)
+- **학년**: 초등학교 3학년
+- **성격**: 활발하고 호기심 많음, 약속에 대한 개념이 형성되는 시기
+- **목표**: 엄마/아빠와의 약속을 통해 원하는 것을 얻고 싶음
+- **니즈**:
+  - 부모와의 약속이 지켜지는지 확인하고 싶음
+  - 집안일이나 숙제를 했을 때 확실한 보상을 받고 싶음
+  - 약속 과정이 재미있고 게임처럼 느껴지길 원함
+- **페인 포인트**:
+  - 부모가 약속을 지키지 않았을 때 억울함을 느낌
+  - 자신이 약속을 지켰는지 인정받고 싶어함
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/59a961fa-9527-4400-ba77-f67457a532b5) and start prompting.
+---
 
-Changes made via Lovable will be committed automatically to this repo.
+## 📖 사용자 시나리오 및 스토리
 
-**Use your preferred IDE**
+### 시나리오 1: 바쁜 워킹맘의 놀이공원 약속 관리
+**상황**: 김수진이 아들 민준이와 주말에 놀이공원에 가기로 약속했지만, 항상 야근 때문에 약속을 지키지 못하는 상황
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+**사용자 시나리오**:
+1. 김수진이 웹사이트에 접속하여 가족 계정으로 로그인
+2. "새 약속 만들기" 버튼을 클릭하여 약속 등록 페이지로 이동
+3. 약속 내용 입력: "민준이와 놀이공원 가기"
+4. 이행할 사람: 김수진 선택
+5. 보상/페널티 받을 사람: 민준이 선택
+6. 페널티 금액: 10,000원 설정
+7. 마감 기한: 이번 주 일요일 오후 6시로 설정
+8. 민준이에게 약속 승인 요청 알림 발송
+9. 민준이가 약속 내용을 확인하고 승인
+10. 마감 기한 이후, 김수진과 민준이 모두 약속 이행 여부를 선택
+11. 두 사람의 선택이 일치하면 자동으로 페널티/보상 처리
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+**사용자 스토리**:
+"바쁜 워킹맘으로서, 저는 아이와의 약속을 체계적으로 관리하고 싶습니다. 그래서 약속을 지키지 못했을 때의 책임감을 느끼고, 아이와의 신뢰를 회복할 수 있습니다."
 
-Follow these steps:
+**인수 조건**:
+- Given: 사용자가 가족 계정으로 로그인한 상태
+- When: 새로운 약속을 등록하고 상대방이 승인했을 때
+- Then: 약속이 활성화되고 마감 기한까지 알림이 발송됨
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### 시나리오 2: 아이의 집안일 보상 약속
+**상황**: 김수진이 민준이에게 일주일 동안 설거지를 도와주면 용돈을 주기로 약속
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+**사용자 시나리오**:
+1. 김수진이 약속 등록: "민준이가 일주일 동안 설거지 도와주기"
+2. 이행할 사람: 민준이 선택
+3. 보상받을 사람: 민준이 선택
+4. 보상 금액: 5,000원 설정
+5. 마감 기한: 일주일 후로 설정
+6. 매일 민준이가 설거지 완료 체크 (사진 인증 또는 체크박스)
+7. 김수진이 민준이의 집안일 완료 여부를 확인하고 승인
+8. 마감 기한 후 양측이 약속 이행 여부를 평가
+9. 약속 이행 시 보상 지급
 
-# Step 3: Install the necessary dependencies.
-npm i
+**사용자 스토리**:
+"초등학생으로서, 저는 집안일을 도와주면 확실한 보상을 받고 싶습니다. 그래서 더 적극적으로 가족 일에 참여할 수 있습니다."
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+**인수 조건**:
+- Given: 보상형 약속이 등록되고 활성화된 상태
+- When: 아이가 약속을 성공적으로 이행했을 때
+- Then: 설정된 보상이 자동으로 지급됨
 
-**Edit a file directly in GitHub**
+---
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 💡 핵심 가치 제안
 
-**Use GitHub Codespaces**
+### 1. 가족 간 신뢰 구축
+- 약속의 투명한 관리를 통해 부모-자녀 간 신뢰 관계 강화
+- 약속 이행 기록을 통한 가족 관계 개선 도구 제공
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### 2. 책임감 있는 약속 문화 조성
+- 페널티/보상 시스템을 통한 약속의 중요성 인식
+- 아이들의 약속 개념 형성 및 책임감 발달 지원
 
-## What technologies are used for this project?
+### 3. 체계적인 가족 약속 관리
+- 디지털 도구를 활용한 약속 관리의 효율성
+- 약속 이행 현황 추적 및 가족 내 소통 개선
 
-This project is built with:
+### 4. 동기부여 시스템
+- 보상/페널티를 통한 행동 변화 유도
+- 게임화 요소를 통한 재미있는 약속 이행 경험
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+---
 
-## How can I deploy this project?
+## 🛠️ 핵심 기능
 
-Simply open [Lovable](https://lovable.dev/projects/59a961fa-9527-4400-ba77-f67457a532b5) and click on Share -> Publish.
+### 1. 약속 등록 및 관리
+- **약속 생성**: 약속 내용, 이행자, 보상/페널티 대상자, 금액, 마감 기한 설정
+- **약속 승인**: 상대방의 약속 승인/거부 기능
+- **약속 수정**: 양측 합의 하에 약속 내용 수정 가능
+- **약속 취소**: 특별한 사유 발생 시 약속 취소 기능
 
-## Can I connect a custom domain to my Lovable project?
+### 2. 이행 확인 시스템
+- **체크인 기능**: 일상적인 약속의 경우 매일 체크인 가능
+- **사진 인증**: 집안일 등의 경우 사진으로 완료 인증
+- **상호 확인**: 양측이 모두 약속 이행 여부를 확인해야 완료
 
-Yes, you can!
+### 3. 보상/페널티 처리
+- **자동 정산**: 약속 이행 결과에 따른 자동 금액 이체
+- **포인트 시스템**: 실제 금액 대신 가족 내 포인트로 운영 가능
+- **보상 히스토리**: 누적 보상/페널티 내역 확인
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### 4. 알림 및 리마인더
+- **마감 기한 알림**: 약속 마감 전 자동 알림 발송
+- **이행 확인 요청**: 마감 후 양측에게 이행 여부 확인 요청
+- **분쟁 알림**: 양측 의견이 다를 경우 재확인 요청
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+### 5. 통계 및 분석
+- **약속 이행률**: 개인별, 가족별 약속 이행 통계
+- **보상/페널티 내역**: 월별, 분기별 정산 내역
+- **성취 배지**: 연속 약속 이행 시 배지 부여
+
+### 6. 가족 대시보드
+- **진행 중인 약속**: 현재 활성화된 약속 목록
+- **완료된 약속**: 과거 약속 이행 내역
+- **가족 랭킹**: 약속 이행률 기반 가족 내 순위
+
+---
+
+## 🎯 구현 범위
+
+- 실제 AI 연동 없이 목업(Mocking) 데이터로 구현
+- 챗봇의 UI/UX와 기본적인 대화 흐름을 보여주는 프로토타입 수준
+- 사용자 입력에 대한 미리 정의된 응답 패턴 활용
+
+### Phase 1: 기본 약속 관리 시스템
+- 사용자 회원가입 및 가족 그룹 생성
+- 기본적인 약속 등록, 승인, 이행 확인 기능
+- 약속 목록 및 상태 확인 페이지
+
+### Phase 2: 보상/페널티 시스템
+- 포인트 기반 보상/페널티 처리 (실제 금액 이체 제외)
+- 이행 확인 시 양측 검증 시스템
+- 분쟁 처리 및 재확인 기능
+- 기본 통계 및 히스토리 제공
