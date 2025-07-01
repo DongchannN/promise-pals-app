@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -6,20 +5,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Clock, Star, Check, X, AlertCircle } from "lucide-react";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
-
-interface Promise {
-  id: number;
-  title: string;
-  description: string;
-  performer: string;
-  beneficiary: string;
-  rewardAmount: number;
-  deadline: Date;
-  status: "pending" | "active" | "completed" | "failed" | "disputed";
-  type: "reward" | "penalty";
-  category: string;
-  progress?: number;
-}
+import { Promise } from "@/types/Promise";
 
 interface PromiseCardProps {
   promise: Promise;

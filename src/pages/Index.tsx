@@ -7,9 +7,10 @@ import PromiseCard from "@/components/PromiseCard";
 import PromiseForm from "@/components/PromiseForm";
 import FamilyMembers from "@/components/FamilyMembers";
 import StatsSection from "@/components/StatsSection";
+import { Promise } from "@/types/Promise";
 
-// Mock data for demo
-const mockPromises = [
+// Mock data for demo with proper typing
+const mockPromises: Promise[] = [
   {
     id: 1,
     title: "민준이와 놀이공원 가기",
@@ -18,8 +19,8 @@ const mockPromises = [
     beneficiary: "김민준",
     rewardAmount: 10000,
     deadline: new Date(2025, 6, 7, 18, 0),
-    status: "active" as const,
-    type: "penalty" as const,
+    status: "active",
+    type: "penalty",
     category: "활동",
     progress: 0
   },
@@ -31,8 +32,8 @@ const mockPromises = [
     beneficiary: "김민준",
     rewardAmount: 5000,
     deadline: new Date(2025, 6, 10, 20, 0),
-    status: "active" as const,
-    type: "reward" as const,
+    status: "active",
+    type: "reward",
     category: "집안일",
     progress: 60
   },
@@ -44,20 +45,20 @@ const mockPromises = [
     beneficiary: "김민준",
     rewardAmount: 3000,
     deadline: new Date(2025, 6, 5, 20, 0),
-    status: "pending" as const,
-    type: "reward" as const,
+    status: "pending",
+    type: "reward",
     category: "공부",
     progress: 0
   }
 ];
 
 const Index = () => {
-  const [promises, setPromises] = useState(mockPromises);
+  const [promises, setPromises] = useState<Promise[]>(mockPromises);
   const [showForm, setShowForm] = useState(false);
   const { toast } = useToast();
 
   const handleCreatePromise = (promiseData: any) => {
-    const newPromise = {
+    const newPromise: Promise = {
       ...promiseData,
       deadline: promiseData.deadline || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
     };
