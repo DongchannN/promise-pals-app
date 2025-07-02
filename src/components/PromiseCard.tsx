@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -96,8 +95,8 @@ const PromiseCard = ({ promise, onComplete, onVerify }: PromiseCardProps) => {
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <DollarSign className="w-4 h-4 text-green-600" />
-            <span className="font-medium text-green-700">₩{promise.rewardAmount.toLocaleString()}</span>
-            <span className="text-sm text-gray-500">
+            <span className={promise.type === "penalty" ? "font-medium text-red-500" : "font-medium text-green-700"}>₩{promise.rewardAmount.toLocaleString()}</span>
+            <span className={promise.type === "penalty" ? "text-sm text-red-500" : "text-sm text-gray-500"}>
               {promise.type === "reward" ? "보상" : "패널티"}
             </span>
           </div>

@@ -45,6 +45,18 @@ const mockPromises: Promise[] = [
     status: "pending",
     type: "reward",
     category: "집안일"
+  },
+  {
+    id: 4,
+    title: "민준이와 놀이공원 가기",
+    description: "이번 주말에 민준이와 함께 에버랜드에 가서 하루 종일 놀기",
+    performer: "김수진",
+    creator: "김민준",
+    rewardAmount: 10000,
+    deadline: new Date(2025, 6, 7, 18, 0),
+    status: "active",
+    type: "penalty",
+    category: "활동"
   }
 ];
 
