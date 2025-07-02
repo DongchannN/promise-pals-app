@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
@@ -73,6 +72,7 @@ const Index = () => {
   };
 
   const handleCompletePromise = (id: number) => {
+    const promise = promises.find(p => p.id === id);
     setPromises(prev => 
       prev.map(promise => 
         promise.id === id 
@@ -81,10 +81,12 @@ const Index = () => {
       )
     );
     
-    toast({
-      title: "약속 완료! 🌟",
-      description: "정말 멋져요! 포인트가 적립되었습니다.",
-    });
+    if (promise) {
+      toast({
+        title: "약속 완료! 🌟",
+        description: `₩${promise.rewardAmount.toLocaleString()} ${promise.type === 'reward' ? '보상이 지급' : '페널티가 차감'}되었습니다.`,
+      });
+    }
   };
 
   const handleVerifyPromise = (id: number, verified: boolean) => {

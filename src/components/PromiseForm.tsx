@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,9 +8,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
-import { CalendarIcon, Heart, Star, AlertCircle } from "lucide-react";
+import { CalendarIcon, Heart, Star, AlertCircle, Won, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface PromiseFormProps {
@@ -20,8 +20,8 @@ interface PromiseFormProps {
 }
 
 const mockFamilyMembers = [
-  { id: 1, name: "김수진", role: "엄마" },
-  { id: 2, name: "김민준", role: "아들" }
+  { id: 1, name: "김수진", role: "엄마", balance: 45000 },
+  { id: 2, name: "김민준", role: "아들", balance: 12000 }
 ];
 
 const PromiseForm = ({ onSubmit, onCancel }: PromiseFormProps) => {
@@ -36,16 +36,29 @@ const PromiseForm = ({ onSubmit, onCancel }: PromiseFormProps) => {
     category: ""
   });
 
+  const currentUserBalance = 45000; // 현재 사용자 잔액
+  const isInsufficientBalance = formData.amount && parseInt(formData.amount) > currentUserBalance;
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title || !formData.performer || !formData.beneficiary || !formData.amount || !formData.deadline) {
       alert("모든 필수 항목을 입력해주세요.");
       return;
     }
+
+    if (formData.performer === formData.beneficiary) {
+      alert("자기 자신에게는 보상/페널티를 설정할 수 없습니다.");
+      return;
+    }
+
+    if (isInsufficientBalance) {
+      alert("잔액이 부족합니다. 충전 후 다시 시도해주세요.");
+      return;
+    }
     
     onSubmit({
       ...formData,
-      amount: parseInt(formData.amount),
+      rewardAmount: parseInt(formData.amount),
       id: Date.now(),
       status: "pending",
       progress: 0
@@ -59,6 +72,14 @@ const PromiseForm = ({ onSubmit, onCancel }: PromiseFormProps) => {
           <Heart className="w-6 h-6 text-pink-500" />
           <span>새로운 약속 만들기</span>
         </CardTitle>
+        <div className="mt-2 p-3 bg-green-50 rounded-lg border border-green-200">
+          <div className="flex items-center space-x-2">
+            <Won className="w-4 h-4 text-green-600" />
+            <span className="text-sm text-green-700">
+              내 잔액: <strong>₩{currentUserBalance.toLocaleString()}</strong>
+            </span>
+          </div>
+        </div>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -139,19 +160,36 @@ const PromiseForm = ({ onSubmit, onCancel }: PromiseFormProps) => {
               </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-3">
               <Label htmlFor="amount">
-                {formData.type === "reward" ? "보상" : "페널티"} 포인트 *
+                {formData.type === "reward" ? "보상" : "페널티"} 금액 *
               </Label>
-              <Input
-                id="amount"
-                type="number"
-                value={formData.amount}
-                onChange={(e) => setFormData(prev => ({ ...prev, amount: e.target.value }))}
-                placeholder="1000"
-                min="0"
-                step="100"
-              />
+              <div className="relative">
+                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                  ₩
+                </div>
+                <Input
+                  id="amount"
+                  type="number"
+                  value={formData.amount}
+                  onChange={(e) => setFormData(prev => ({ ...prev, amount: e.target.value }))}
+                  placeholder="10,000"
+                  min="0"
+                  step="1000"
+                  className={cn(
+                    "pl-8",
+                    isInsufficientBalance && "border-red-500 focus:border-red-500"
+                  )}
+                />
+              </div>
+              {isInsufficientBalance && (
+                <Alert className="border-red-200 bg-red-50">
+                  <AlertTriangle className="h-4 w-4 text-red-600" />
+                  <AlertDescription className="text-red-700">
+                    잔액이 부족합니다. 현재 잔액: ₩{currentUserBalance.toLocaleString()}
+                  </AlertDescription>
+                </Alert>
+              )}
             </div>
           </div>
 
@@ -202,7 +240,7 @@ const PromiseForm = ({ onSubmit, onCancel }: PromiseFormProps) => {
           </div>
 
           <div className="flex space-x-3 pt-4">
-            <Button type="submit" className="flex-1">
+            <Button type="submit" className="flex-1" disabled={isInsufficientBalance}>
               약속 만들기
             </Button>
             <Button type="button" variant="outline" onClick={onCancel} className="flex-1">

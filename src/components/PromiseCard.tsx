@@ -1,8 +1,9 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Clock, Star, Check, X, AlertCircle } from "lucide-react";
+import { Clock, Star, Check, X, AlertCircle, Won } from "lucide-react";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import { Promise } from "@/types/Promise";
@@ -82,8 +83,11 @@ const PromiseCard = ({ promise, onComplete, onVerify }: PromiseCardProps) => {
       <CardContent className="space-y-4">
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-2">
-            <Star className="w-4 h-4 text-yellow-500" />
-            <span className="font-medium">{promise.rewardAmount.toLocaleString()}P</span>
+            <Won className="w-4 h-4 text-green-600" />
+            <span className="font-medium text-green-700">₩{promise.rewardAmount.toLocaleString()}</span>
+            <span className="text-sm text-gray-500">
+              {promise.type === "reward" ? "지급 예정" : "차감 예정"}
+            </span>
           </div>
           
           <div className="flex items-center space-x-2 text-sm">
@@ -101,14 +105,20 @@ const PromiseCard = ({ promise, onComplete, onVerify }: PromiseCardProps) => {
         {promise.progress !== undefined && (
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span>진행률</span>
-              <span>{promise.progress}%</span>
+              <span>달성률</span>
+              <span className="font-medium">{promise.progress}%</span>
             </div>
-            <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
               <div 
-                className="h-full family-success transition-all duration-500"
+                className="h-full bg-gradient-to-r from-green-400 to-green-600 transition-all duration-500 relative"
                 style={{ width: `${promise.progress}%` }}
-              />
+              >
+                {promise.progress > 20 && (
+                  <div className="absolute inset-0 flex items-center justify-center text-xs text-white font-medium">
+                    {promise.progress}%
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
