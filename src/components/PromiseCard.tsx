@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Clock, Star, Check, X, AlertCircle, Won } from "lucide-react";
+import { Clock, Star, Check, X, AlertCircle, DollarSign } from "lucide-react";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import { Promise } from "@/types/Promise";
@@ -83,7 +83,7 @@ const PromiseCard = ({ promise, onComplete, onVerify }: PromiseCardProps) => {
       <CardContent className="space-y-4">
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-2">
-            <Won className="w-4 h-4 text-green-600" />
+            <DollarSign className="w-4 h-4 text-green-600" />
             <span className="font-medium text-green-700">₩{promise.rewardAmount.toLocaleString()}</span>
             <span className="text-sm text-gray-500">
               {promise.type === "reward" ? "지급 예정" : "차감 예정"}

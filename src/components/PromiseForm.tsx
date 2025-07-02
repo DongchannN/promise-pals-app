@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,7 +12,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
-import { CalendarIcon, Heart, Star, AlertCircle, Won, AlertTriangle } from "lucide-react";
+import { CalendarIcon, Heart, Star, AlertCircle, DollarSign, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface PromiseFormProps {
@@ -74,7 +75,7 @@ const PromiseForm = ({ onSubmit, onCancel }: PromiseFormProps) => {
         </CardTitle>
         <div className="mt-2 p-3 bg-green-50 rounded-lg border border-green-200">
           <div className="flex items-center space-x-2">
-            <Won className="w-4 h-4 text-green-600" />
+            <DollarSign className="w-4 h-4 text-green-600" />
             <span className="text-sm text-green-700">
               내 잔액: <strong>₩{currentUserBalance.toLocaleString()}</strong>
             </span>

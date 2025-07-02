@@ -1,8 +1,7 @@
-
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Star, Trophy, Heart, Won } from "lucide-react";
+import { Star, Trophy, Heart, DollarSign } from "lucide-react";
 
 const mockFamilyMembers = [
   {
@@ -62,7 +61,7 @@ const FamilyMembers = () => {
             <div className="flex justify-between items-center">
               <span className="text-sm text-muted-foreground">보유 금액</span>
               <div className="flex items-center space-x-1">
-                <Won className="w-4 h-4 text-green-600" />
+                <DollarSign className="w-4 h-4 text-green-600" />
                 <span className="font-medium text-green-700">₩{member.balance.toLocaleString()}</span>
               </div>
             </div>
