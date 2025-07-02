@@ -1,14 +1,16 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Target, Calendar, Plus, Minus, Wallet, CheckCircle } from "lucide-react";
 
-const StatsSection = () => {
+interface StatsSectionProps {
+  myBalance: number;
+}
+
+const StatsSection = ({ myBalance }: StatsSectionProps) => {
   const stats = {
     totalPromises: 20,
     completedPromises: 17,
     activePromises: 3,
-    myBalance: 45000, // 개인 보유 금액
     thisWeek: {
       promises: 5,
       completed: 4
@@ -39,7 +41,7 @@ const StatsSection = () => {
         </CardHeader>
         <CardContent>
           <div className="text-3xl font-bold text-green-700">
-            ₩{stats.myBalance.toLocaleString()}
+            ₩{myBalance.toLocaleString()}
           </div>
           <p className="text-sm text-green-600 mt-1">
             사용 가능한 금액

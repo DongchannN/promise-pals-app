@@ -7,6 +7,7 @@ import PromiseForm from "@/components/PromiseForm";
 import FamilyMembers from "@/components/FamilyMembers";
 import StatsSection from "@/components/StatsSection";
 import { Promise } from "@/types/Promise";
+import mockFamilyMembers from "../components/FamilyMembers";
 
 // Mock data for demo with proper typing
 const mockPromises: Promise[] = [
@@ -62,8 +63,16 @@ const mockPromises: Promise[] = [
 
 const Index = () => {
   const [promises, setPromises] = useState<Promise[]>(mockPromises);
+  const [familyMembers, setFamilyMembers] = useState<any[]>([
+    { id: 1, name: "김수진", role: "엄마", balance: 45000, isCurrentUser: true },
+    { id: 2, name: "김민준", role: "아들", balance: 12000, isCurrentUser: false }
+  ]);
   const [showForm, setShowForm] = useState(false);
   const { toast } = useToast();
+
+  // Assume logged-in user is 김수진
+  const currentUserName = "김수진";
+  const myBalance = familyMembers.find(m => m.name === currentUserName)?.balance || 0;
 
   const handleCreatePromise = (promiseData: any) => {
     const newPromise: Promise = {
@@ -89,8 +98,24 @@ const Index = () => {
           : promise
       )
     );
-    
     if (promise) {
+      setFamilyMembers(prev => prev.map(member => {
+        if (promise.type === "reward") {
+          // 보상: 등록자 balance 감소, 실행자 balance 증가
+          if (member.name === promise.creator) {
+            return { ...member, balance: member.balance - promise.rewardAmount };
+          }
+          if (member.name === promise.performer) {
+            return { ...member, balance: member.balance + promise.rewardAmount };
+          }
+        } else {
+          // 패널티: 실행자 balance 감소
+          if (member.name === promise.performer) {
+            return { ...member, balance: member.balance - promise.rewardAmount };
+          }
+        }
+        return member;
+      }));
       toast({
         title: "약속 완료! 🌟",
         description: `₩${promise.rewardAmount.toLocaleString()} ${promise.type === 'reward' ? '보상이 지급' : '패널티가 차감'}되었습니다.`,
@@ -119,6 +144,22 @@ const Index = () => {
   const pendingPromises = promises.filter(p => p.status === "pending");
   const completedPromises = promises.filter(p => p.status === "completed" || p.status === "failed");
 
+  // Add stats to each family member
+  const getMemberStats = (memberName: string) => {
+    const activePromises = promises.filter(
+      p => p.performer === memberName && p.status === "active"
+    ).length;
+    const promiseCount = promises.filter(
+      p => p.performer === memberName
+    ).length;
+    return { activePromises, promiseCount };
+  };
+
+  const familyMembersWithStats = familyMembers.map(member => ({
+    ...member,
+    ...getMemberStats(member.name),
+  }));
+
   if (showForm) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -139,7 +180,7 @@ const Index = () => {
       
       <div className="container mx-auto px-4 py-8 space-y-8">
         {/* Stats Section */}
-        <StatsSection />
+        <StatsSection myBalance={myBalance} />
         
         {/* Main Content */}
         <Tabs defaultValue="active" className="w-full">
@@ -212,7 +253,7 @@ const Index = () => {
           </TabsContent>
 
           <TabsContent value="family" className="space-y-6">
-            <FamilyMembers />
+            <FamilyMembers familyMembers={familyMembersWithStats} />
           </TabsContent>
         </Tabs>
       </div>

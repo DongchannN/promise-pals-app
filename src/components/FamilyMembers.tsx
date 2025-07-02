@@ -1,37 +1,28 @@
-
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Star, Trophy, Heart, CheckCircle, Clock } from "lucide-react";
 
-const mockFamilyMembers = [
-  {
-    id: 1,
-    name: "김수진",
-    role: "엄마",
-    avatar: "수",
-    promiseCount: 12,
-    activePromises: 3,
-    isCurrentUser: true, // 현재 로그인 사용자
-    balance: 45000, // 본인만 볼 수 있음
-    badges: ["신뢰왕", "약속지킴이"]
-  },
-  {
-    id: 2,
-    name: "김민준",
-    role: "아들",
-    avatar: "민",
-    promiseCount: 8,
-    activePromises: 2,
-    isCurrentUser: false,
-    badges: ["집안일왕", "숙제킹"]
-  }
-];
+interface FamilyMember {
+  id: number;
+  name: string;
+  role: string;
+  avatar?: string;
+  promiseCount?: number;
+  activePromises?: number;
+  isCurrentUser?: boolean;
+  balance?: number;
+  badges?: string[];
+}
 
-const FamilyMembers = () => {
+interface FamilyMembersProps {
+  familyMembers: FamilyMember[];
+}
+
+const FamilyMembers = ({ familyMembers }: FamilyMembersProps) => {
   return (
     <div className="grid gap-4 md:grid-cols-2">
-      {mockFamilyMembers.map((member) => (
+      {familyMembers.map((member) => (
         <Card key={member.id} className="hover:shadow-lg transition-shadow">
           <CardHeader className="pb-3">
             <div className="flex items-center space-x-3">
@@ -68,7 +59,7 @@ const FamilyMembers = () => {
             </div>
             
             <div className="flex flex-wrap gap-1">
-              {member.badges.map((badge, idx) => (
+              {member.badges?.map((badge, idx) => (
                 <Badge key={idx} variant="secondary" className="text-xs">
                   <Trophy className="w-3 h-3 mr-1" />
                   {badge}
