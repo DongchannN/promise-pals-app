@@ -1,27 +1,19 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, Target, Award, Calendar, Plus, Minus, Wallet } from "lucide-react";
+import { Target, Calendar, Plus, Minus, Wallet, CheckCircle } from "lucide-react";
 
 const StatsSection = () => {
   const stats = {
     totalPromises: 20,
     completedPromises: 17,
     activePromises: 3,
-    completionRate: 85,
     myBalance: 45000, // 개인 보유 금액
     thisWeek: {
       promises: 5,
       completed: 4
     }
   };
-
-  // 개인별 잔액 데이터
-  const familyBalances = [
-    { name: "김수진", role: "엄마", balance: 45000 },
-    { name: "김민준", role: "아들", balance: 12000 }
-  ];
 
   return (
     <div className="space-y-6">
@@ -55,32 +47,8 @@ const StatsSection = () => {
         </CardContent>
       </Card>
 
-      {/* 가족 구성원별 잔액 */}
-      <div>
-        <h3 className="text-lg font-semibold mb-3 text-gray-700">가족 구성원 잔액</h3>
-        <div className="grid gap-3 md:grid-cols-2">
-          {familyBalances.map((member, index) => (
-            <Card key={index} className="hover:shadow-md transition-shadow">
-              <CardContent className="pt-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium text-gray-800">{member.name}</p>
-                    <p className="text-sm text-gray-500">{member.role}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-lg font-bold text-green-600">
-                      ₩{member.balance.toLocaleString()}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-
-      {/* 기존 통계 정보 */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {/* 기존 통계 정보 - 단순화 */}
+      <div className="grid gap-4 md:grid-cols-3">
         <Card className="hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">전체 약속</CardTitle>
@@ -96,12 +64,14 @@ const StatsSection = () => {
 
         <Card className="hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">이행률</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">완료된 약속</CardTitle>
+            <CheckCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.completionRate}%</div>
-            <Progress value={stats.completionRate} className="mt-2" />
+            <div className="text-2xl font-bold">{stats.completedPromises}</div>
+            <p className="text-xs text-muted-foreground">
+              총 {stats.totalPromises}개 중
+            </p>
           </CardContent>
         </Card>
 

@@ -12,42 +12,39 @@ import { Promise } from "@/types/Promise";
 const mockPromises: Promise[] = [
   {
     id: 1,
-    title: "민준이와 놀이공원 가기",
-    description: "이번 주말에 민준이와 함께 에버랜드에 가서 하루 종일 놀기",
-    performer: "김수진",
-    beneficiary: "김민준",
+    title: "민준이 숙제 매일 하기",
+    description: "학교 숙제를 매일 저녁 8시까지 완료하기",
+    performer: "김민준", // 실행자 (보상도 받는 사람)
+    creator: "김수진", // 등록자
     rewardAmount: 10000,
     deadline: new Date(2025, 6, 7, 18, 0),
     status: "active",
-    type: "penalty",
-    category: "활동",
-    progress: 0
+    type: "reward",
+    category: "공부"
   },
   {
     id: 2,
     title: "일주일 동안 설거지 도와주기",
     description: "매일 저녁 식사 후 설거지를 도와주기",
     performer: "김민준",
-    beneficiary: "김민준",
+    creator: "김수진",
     rewardAmount: 5000,
     deadline: new Date(2025, 6, 10, 20, 0),
     status: "active",
     type: "reward",
-    category: "집안일",
-    progress: 60
+    category: "집안일"
   },
   {
     id: 3,
-    title: "숙제 매일 하기",
-    description: "학교 숙제를 매일 저녁 8시까지 완료하기",
+    title: "방 정리하기",
+    description: "매일 아침 침실과 책상 정리정돈하기",
     performer: "김민준",
-    beneficiary: "김민준",
+    creator: "김수진",
     rewardAmount: 3000,
     deadline: new Date(2025, 6, 5, 20, 0),
     status: "pending",
     type: "reward",
-    category: "공부",
-    progress: 0
+    category: "집안일"
   }
 ];
 
@@ -67,7 +64,7 @@ const Index = () => {
     
     toast({
       title: "약속이 생성되었어요! 🎉",
-      description: `${newPromise.beneficiary}님에게 승인 요청을 보냈습니다.`,
+      description: `${newPromise.performer}님에게 승인 요청을 보냈습니다.`,
     });
   };
 
@@ -76,7 +73,7 @@ const Index = () => {
     setPromises(prev => 
       prev.map(promise => 
         promise.id === id 
-          ? { ...promise, status: "completed" as const, progress: 100 }
+          ? { ...promise, status: "completed" as const }
           : promise
       )
     );
@@ -84,7 +81,7 @@ const Index = () => {
     if (promise) {
       toast({
         title: "약속 완료! 🌟",
-        description: `₩${promise.rewardAmount.toLocaleString()} ${promise.type === 'reward' ? '보상이 지급' : '페널티가 차감'}되었습니다.`,
+        description: `₩${promise.rewardAmount.toLocaleString()} ${promise.type === 'reward' ? '보상이 지급' : '패널티가 차감'}되었습니다.`,
       });
     }
   };

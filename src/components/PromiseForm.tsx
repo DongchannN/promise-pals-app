@@ -21,34 +21,37 @@ interface PromiseFormProps {
 }
 
 const mockFamilyMembers = [
-  { id: 1, name: "김수진", role: "엄마", balance: 45000 },
-  { id: 2, name: "김민준", role: "아들", balance: 12000 }
+  { id: 1, name: "김수진", role: "엄마", balance: 45000, isCurrentUser: true },
+  { id: 2, name: "김민준", role: "아들", balance: 12000, isCurrentUser: false }
 ];
 
 const PromiseForm = ({ onSubmit, onCancel }: PromiseFormProps) => {
+  const currentUser = mockFamilyMembers.find(member => member.isCurrentUser);
+  const otherMembers = mockFamilyMembers.filter(member => !member.isCurrentUser);
+  
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     performer: "",
-    beneficiary: "",
+    creator: currentUser?.name || "", // 자동으로 현재 사용자로 설정
     type: "reward" as "reward" | "penalty",
     amount: "",
     deadline: undefined as Date | undefined,
     category: ""
   });
 
-  const currentUserBalance = 45000; // 현재 사용자 잔액
+  const currentUserBalance = currentUser?.balance || 0;
   const isInsufficientBalance = formData.amount && parseInt(formData.amount) > currentUserBalance;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.title || !formData.performer || !formData.beneficiary || !formData.amount || !formData.deadline) {
+    if (!formData.title || !formData.performer || !formData.amount || !formData.deadline) {
       alert("모든 필수 항목을 입력해주세요.");
       return;
     }
 
-    if (formData.performer === formData.beneficiary) {
-      alert("자기 자신에게는 보상/페널티를 설정할 수 없습니다.");
+    if (formData.performer === formData.creator) {
+      alert("실행자와 등록자는 다른 사람이어야 합니다.");
       return;
     }
 
@@ -61,8 +64,7 @@ const PromiseForm = ({ onSubmit, onCancel }: PromiseFormProps) => {
       ...formData,
       rewardAmount: parseInt(formData.amount),
       id: Date.now(),
-      status: "pending",
-      progress: 0
+      status: "pending"
     });
   };
 
@@ -90,7 +92,7 @@ const PromiseForm = ({ onSubmit, onCancel }: PromiseFormProps) => {
               id="title"
               value={formData.title}
               onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-              placeholder="예: 민준이와 놀이공원 가기"
+              placeholder="예: 민준이 숙제 매일 하기"
               className="text-base"
             />
           </div>
@@ -108,13 +110,13 @@ const PromiseForm = ({ onSubmit, onCancel }: PromiseFormProps) => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>약속을 이행할 사람 *</Label>
+              <Label>약속을 실행할 사람 *</Label>
               <Select onValueChange={(value) => setFormData(prev => ({ ...prev, performer: value }))}>
                 <SelectTrigger>
                   <SelectValue placeholder="선택해주세요" />
                 </SelectTrigger>
                 <SelectContent>
-                  {mockFamilyMembers.map((member) => (
+                  {otherMembers.map((member) => (
                     <SelectItem key={member.id} value={member.name}>
                       {member.name} ({member.role})
                     </SelectItem>
@@ -124,19 +126,12 @@ const PromiseForm = ({ onSubmit, onCancel }: PromiseFormProps) => {
             </div>
 
             <div className="space-y-2">
-              <Label>보상/페널티 받을 사람 *</Label>
-              <Select onValueChange={(value) => setFormData(prev => ({ ...prev, beneficiary: value }))}>
-                <SelectTrigger>
-                  <SelectValue placeholder="선택해주세요" />
-                </SelectTrigger>
-                <SelectContent>
-                  {mockFamilyMembers.map((member) => (
-                    <SelectItem key={member.id} value={member.name}>
-                      {member.name} ({member.role})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Label>등록자 (자동 설정)</Label>
+              <Input 
+                value={formData.creator} 
+                disabled 
+                className="bg-gray-100"
+              />
             </div>
           </div>
 
@@ -146,7 +141,7 @@ const PromiseForm = ({ onSubmit, onCancel }: PromiseFormProps) => {
               <div className="flex items-center space-x-3">
                 <div className="flex items-center space-x-2">
                   <AlertCircle className="w-4 h-4 text-red-500" />
-                  <span className="text-sm">페널티</span>
+                  <span className="text-sm">패널티</span>
                 </div>
                 <Switch
                   checked={formData.type === "reward"}
@@ -163,7 +158,7 @@ const PromiseForm = ({ onSubmit, onCancel }: PromiseFormProps) => {
 
             <div className="space-y-3">
               <Label htmlFor="amount">
-                {formData.type === "reward" ? "보상" : "페널티"} 금액 *
+                {formData.type === "reward" ? "보상" : "패널티"} 금액 *
               </Label>
               <div className="relative">
                 <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">

@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Clock, Star, Check, X, AlertCircle, DollarSign } from "lucide-react";
+import { Clock, Star, Check, X, AlertCircle, DollarSign, CheckCircle, XCircle } from "lucide-react";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import { Promise } from "@/types/Promise";
@@ -40,6 +40,19 @@ const PromiseCard = ({ promise, onComplete, onVerify }: PromiseCardProps) => {
     );
   };
 
+  const getStatusIcon = () => {
+    switch (promise.status) {
+      case "completed":
+        return <CheckCircle className="w-5 h-5 text-green-600" />;
+      case "failed":
+        return <XCircle className="w-5 h-5 text-red-600" />;
+      case "active":
+        return <Clock className="w-5 h-5 text-blue-600" />;
+      default:
+        return null;
+    }
+  };
+
   const isExpired = new Date() > promise.deadline;
   const daysLeft = Math.ceil((promise.deadline.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
 
@@ -51,6 +64,7 @@ const PromiseCard = ({ promise, onComplete, onVerify }: PromiseCardProps) => {
             <CardTitle className="text-lg mb-2 flex items-center space-x-2">
               {getTypeIcon()}
               <span>{promise.title}</span>
+              {getStatusIcon()}
             </CardTitle>
             <p className="text-sm text-muted-foreground mb-3">{promise.description}</p>
           </div>
@@ -64,18 +78,16 @@ const PromiseCard = ({ promise, onComplete, onVerify }: PromiseCardProps) => {
                 {promise.performer.charAt(0)}
               </AvatarFallback>
             </Avatar>
-            <span className="text-muted-foreground">실행: {promise.performer}</span>
+            <span className="text-muted-foreground">실행자: {promise.performer}</span>
           </div>
           
           <div className="flex items-center space-x-2">
             <Avatar className="w-6 h-6">
               <AvatarFallback className="text-xs family-love">
-                {promise.beneficiary.charAt(0)}
+                {promise.creator.charAt(0)}
               </AvatarFallback>
             </Avatar>
-            <span className="text-muted-foreground">
-              {promise.type === "reward" ? "보상" : "페널티"}: {promise.beneficiary}
-            </span>
+            <span className="text-muted-foreground">등록자: {promise.creator}</span>
           </div>
         </div>
       </CardHeader>
@@ -86,7 +98,7 @@ const PromiseCard = ({ promise, onComplete, onVerify }: PromiseCardProps) => {
             <DollarSign className="w-4 h-4 text-green-600" />
             <span className="font-medium text-green-700">₩{promise.rewardAmount.toLocaleString()}</span>
             <span className="text-sm text-gray-500">
-              {promise.type === "reward" ? "지급 예정" : "차감 예정"}
+              {promise.type === "reward" ? "보상" : "패널티"}
             </span>
           </div>
           
@@ -101,27 +113,6 @@ const PromiseCard = ({ promise, onComplete, onVerify }: PromiseCardProps) => {
         <div className="text-sm text-muted-foreground">
           마감: {format(promise.deadline, "yyyy년 M월 d일 HH:mm", { locale: ko })}
         </div>
-
-        {promise.progress !== undefined && (
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span>달성률</span>
-              <span className="font-medium">{promise.progress}%</span>
-            </div>
-            <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-gradient-to-r from-green-400 to-green-600 transition-all duration-500 relative"
-                style={{ width: `${promise.progress}%` }}
-              >
-                {promise.progress > 20 && (
-                  <div className="absolute inset-0 flex items-center justify-center text-xs text-white font-medium">
-                    {promise.progress}%
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
         
         {promise.status === "active" && !isExpired && (
           <div className="flex space-x-2">

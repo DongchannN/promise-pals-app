@@ -1,7 +1,8 @@
+
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Star, Trophy, Heart, DollarSign } from "lucide-react";
+import { Star, Trophy, Heart, CheckCircle, Clock } from "lucide-react";
 
 const mockFamilyMembers = [
   {
@@ -10,8 +11,9 @@ const mockFamilyMembers = [
     role: "엄마",
     avatar: "수",
     promiseCount: 12,
-    completionRate: 85,
-    balance: 45000, // 보유 금액으로 변경
+    activePromises: 3,
+    isCurrentUser: true, // 현재 로그인 사용자
+    balance: 45000, // 본인만 볼 수 있음
     badges: ["신뢰왕", "약속지킴이"]
   },
   {
@@ -20,8 +22,8 @@ const mockFamilyMembers = [
     role: "아들",
     avatar: "민",
     promiseCount: 8,
-    completionRate: 90,
-    balance: 12000, // 보유 금액으로 변경
+    activePromises: 2,
+    isCurrentUser: false,
     badges: ["집안일왕", "숙제킹"]
   }
 ];
@@ -45,24 +47,18 @@ const FamilyMembers = () => {
             </div>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-muted-foreground">약속 이행률</span>
-              <div className="flex items-center space-x-2">
-                <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full family-success transition-all duration-500"
-                    style={{ width: `${member.completionRate}%` }}
-                  />
-                </div>
-                <span className="text-sm font-medium">{member.completionRate}%</span>
+            {member.isCurrentUser && (
+              <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg border border-green-200">
+                <span className="text-sm font-medium text-green-700">내 잔액</span>
+                <span className="font-bold text-green-700">₩{member.balance!.toLocaleString()}</span>
               </div>
-            </div>
+            )}
             
             <div className="flex justify-between items-center">
-              <span className="text-sm text-muted-foreground">보유 금액</span>
+              <span className="text-sm text-muted-foreground">진행 중인 약속</span>
               <div className="flex items-center space-x-1">
-                <DollarSign className="w-4 h-4 text-green-600" />
-                <span className="font-medium text-green-700">₩{member.balance.toLocaleString()}</span>
+                <Clock className="w-4 h-4 text-blue-600" />
+                <span className="font-medium">{member.activePromises}개</span>
               </div>
             </div>
             
