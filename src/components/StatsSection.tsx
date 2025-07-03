@@ -4,9 +4,11 @@ import { Target, Calendar, Plus, Minus, Wallet, CheckCircle } from "lucide-react
 
 interface StatsSectionProps {
   myBalance: number;
+  viewMode: "child" | "parent";
 }
 
-const StatsSection = ({ myBalance }: StatsSectionProps) => {
+const StatsSection = ({ myBalance, viewMode }: StatsSectionProps) => {
+  const isChildMode = viewMode === "child";
   const stats = {
     totalPromises: 20,
     completedPromises: 17,
@@ -25,16 +27,16 @@ const StatsSection = ({ myBalance }: StatsSectionProps) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Wallet className="h-6 w-6 text-green-600" />
-              <CardTitle className="text-xl text-green-800">내 잔액</CardTitle>
+              <CardTitle className="text-xl text-green-800">{isChildMode ? "내 용돈" : "내 잔액"}</CardTitle>
             </div>
             <div className="flex space-x-2">
               <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
                 <Plus className="w-4 h-4 mr-1" />
-                충전하기
+                {isChildMode ? "용돈 넣기" : "충전하기"}
               </Button>
               <Button size="sm" variant="outline" className="border-orange-400 text-orange-600 hover:bg-orange-50">
                 <Minus className="w-4 h-4 mr-1" />
-                인출하기
+                {isChildMode ? "용돈 빼기" : "인출하기"}
               </Button>
             </div>
           </div>

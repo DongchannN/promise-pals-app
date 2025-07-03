@@ -1,7 +1,8 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Star, Trophy, Heart, CheckCircle, Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Star, Trophy, Heart, CheckCircle, Clock, User, Shield } from "lucide-react";
 
 interface FamilyMember {
   id: number;
@@ -13,13 +14,14 @@ interface FamilyMember {
   isCurrentUser?: boolean;
   balance?: number;
   badges?: string[];
+  userType: "child" | "parent";
 }
 
 interface FamilyMembersProps {
   familyMembers: FamilyMember[];
 }
 
-const FamilyMembers = ({ familyMembers }: FamilyMembersProps) => {
+const FamilyMembers = ({ familyMembers, setViewMode }: FamilyMembersProps) => {
   return (
     <div className="grid gap-4 md:grid-cols-2">
       {familyMembers.map((member) => (
@@ -40,7 +42,7 @@ const FamilyMembers = ({ familyMembers }: FamilyMembersProps) => {
           <CardContent className="space-y-3">
             {member.isCurrentUser && (
               <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg border border-green-200">
-                <span className="text-sm font-medium text-green-700">내 잔액</span>
+                <span className="text-sm font-medium text-green-700">{member.userType === 'child' ? "내 용돈" : "내 잔액"}</span>
                 <span className="font-bold text-green-700">₩{member.balance!.toLocaleString()}</span>
               </div>
             )}
@@ -66,6 +68,8 @@ const FamilyMembers = ({ familyMembers }: FamilyMembersProps) => {
                 </Badge>
               ))}
             </div>
+
+            
           </CardContent>
         </Card>
       ))}

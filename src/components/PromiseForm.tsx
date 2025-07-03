@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 interface PromiseFormProps {
   onSubmit: (promiseData: any) => void;
   onCancel: () => void;
+  viewMode: "child" | "parent";
 }
 
 const mockFamilyMembers = [
@@ -25,7 +26,8 @@ const mockFamilyMembers = [
   { id: 2, name: "김민준", role: "아들", balance: 12000, isCurrentUser: false }
 ];
 
-const PromiseForm = ({ onSubmit, onCancel }: PromiseFormProps) => {
+const PromiseForm = ({ onSubmit, onCancel, viewMode }: PromiseFormProps) => {
+  const isChildMode = viewMode === "child";
   const currentUser = mockFamilyMembers.find(member => member.isCurrentUser);
   const otherMembers = mockFamilyMembers.filter(member => !member.isCurrentUser);
   
@@ -141,7 +143,7 @@ const PromiseForm = ({ onSubmit, onCancel }: PromiseFormProps) => {
               <div className="flex items-center space-x-3">
                 <div className="flex items-center space-x-2">
                   <AlertCircle className="w-4 h-4 text-red-500" />
-                  <span className="text-sm">패널티</span>
+                  <span className="text-sm">{isChildMode ? "아쉬워요" : "패널티"}</span>
                 </div>
                 <Switch
                   checked={formData.type === "reward"}
@@ -151,14 +153,14 @@ const PromiseForm = ({ onSubmit, onCancel }: PromiseFormProps) => {
                 />
                 <div className="flex items-center space-x-2">
                   <Star className="w-4 h-4 text-yellow-500" />
-                  <span className="text-sm">보상</span>
+                  <span className="text-sm">{isChildMode ? "선물" : "보상"}</span>
                 </div>
               </div>
             </div>
 
             <div className="space-y-3">
               <Label htmlFor="amount">
-                {formData.type === "reward" ? "보상" : "패널티"} 금액 *
+                {isChildMode ? (formData.type === "reward" ? "선물" : "아쉬워요") : (formData.type === "reward" ? "보상" : "패널티")} 금액 *
               </Label>
               <div className="relative">
                 <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">

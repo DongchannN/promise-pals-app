@@ -1,4 +1,5 @@
 
+import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,81 +12,48 @@ import { Promise } from "@/types/Promise";
 interface PromiseCardProps {
   promise: Promise;
   onComplete?: (id: number) => void;
+  onFail?: (id: number) => void;
   onVerify?: (id: number, verified: boolean) => void;
   onClick?: (promise: Promise) => void;
+  viewMode: "child" | "parent";
 }
 
-const PromiseCard = ({ promise, onComplete, onVerify, onClick }: PromiseCardProps) => {
-  const getStatusBadge = () => {
-    switch (promise.status) {
-      case "pending":
-        return <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-300">승인 대기</Badge>;
-      case "active":
-        return <Badge className="bg-blue-50 text-blue-700 border-blue-300">진행 중</Badge>;
-      case "completed":
-        return <Badge className="bg-green-50 text-green-700 border-green-300">완료</Badge>;
-      case "failed":
-        return <Badge variant="destructive" className="bg-red-50 text-red-700 border-red-300">실패</Badge>;
-      case "disputed":
-        return <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-300">검토 중</Badge>;
-      default:
-        return null;
-    }
-  };
+const PromiseCard = ({ promise, onComplete, onFail, onVerify, onClick, viewMode }: PromiseCardProps) => {
+  const { title, performer, creator, rewardAmount, deadline, status, type, category } = promise;
+  const isChildMode = viewMode === "child";
 
-  const getTypeDisplay = () => {
-    if (promise.type === "reward") {
-      return {
-        icon: <Star className="w-4 h-4 text-yellow-500" />,
-        label: "보상",
-        amountColor: "text-green-600",
-        bgColor: "bg-green-50 border-green-200",
-        trendIcon: <TrendingUp className="w-4 h-4 text-green-500" />
-      };
-    } else {
-      return {
-        icon: <AlertCircle className="w-4 h-4 text-red-500" />,
-        label: "패널티",
-        amountColor: "text-red-600",
-        bgColor: "bg-red-50 border-red-200",
-        trendIcon: <TrendingDown className="w-4 h-4 text-red-500" />
-      };
-    }
-  };
+  const cardClasses = cn(
+    "rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl border-2",
+    status === "active" && "border-blue-400 bg-blue-50",
+    status === "pending" && "border-yellow-400 bg-yellow-50",
+    status === "completed" && "border-green-400 bg-green-50",
+    status === "failed" && "border-red-400 bg-red-50",
+    isChildMode && "p-6"
+  );
 
-  const getStatusIcon = () => {
-    switch (promise.status) {
-      case "completed":
-        return <CheckCircle className="w-5 h-5 text-green-600" />;
-      case "failed":
-        return <XCircle className="w-5 h-5 text-red-600" />;
-      case "active":
-        return <Clock className="w-5 h-5 text-blue-600" />;
-      default:
-        return null;
-    }
-  };
+  const titleClasses = cn(
+    "font-bold tracking-tight",
+    isChildMode ? "text-2xl" : "text-xl"
+  );
 
-  const typeDisplay = getTypeDisplay();
-  const isExpired = new Date() > promise.deadline;
-  const daysLeft = Math.ceil((promise.deadline.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+  const buttonClasses = cn(
+    isChildMode ? "py-4 px-6 text-lg" : "py-2 px-4 text-sm"
+  );
+    
 
   return (
     <Card 
-      className="hover:shadow-lg transition-all duration-200 hover:scale-[1.02] cursor-pointer"
+      className={cardClasses}
       onClick={() => onClick?.(promise)}
     >
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <CardTitle className="text-lg mb-2 flex items-center space-x-2">
-              {typeDisplay.icon}
-              <span>{promise.title}</span>
-              {getStatusIcon()}
+            <CardTitle className={titleClasses}>
+              {promise.title}
             </CardTitle>
             <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{promise.description}</p>
           </div>
-          {getStatusBadge()}
         </div>
         
         <div className="flex items-center space-x-4 text-sm">
@@ -110,20 +78,15 @@ const PromiseCard = ({ promise, onComplete, onVerify, onClick }: PromiseCardProp
       </CardHeader>
       
       <CardContent className="space-y-4">
-        {/* 보상/패널티 금액 - 구분 강화 */}
-        <div className={`p-3 rounded-lg border ${typeDisplay.bgColor}`}>
+        <div className={`p-3 rounded-lg border`}>
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-2">
-              {typeDisplay.trendIcon}
-              <span className="font-medium text-sm">{typeDisplay.label}</span>
+              <span className="font-medium text-sm">{isChildMode ? (promise.type === "reward" ? "선물" : "아쉬워요") : (promise.type === "reward" ? "보상" : "패널티")}</span>
             </div>
             <div className="text-right">
-              <span className={`text-xl font-bold ${typeDisplay.amountColor}`}>
+              <span className={`text-xl font-bold`}>
                 ₩{promise.rewardAmount.toLocaleString()}
               </span>
-              {promise.type === "penalty" && (
-                <div className="text-xs text-red-500 mt-1">차감 예정</div>
-              )}
             </div>
           </div>
         </div>
@@ -131,8 +94,8 @@ const PromiseCard = ({ promise, onComplete, onVerify, onClick }: PromiseCardProp
         <div className="flex justify-between items-center text-sm">
           <div className="flex items-center space-x-2">
             <Clock className="w-4 h-4" />
-            <span className={isExpired ? "text-red-500" : "text-muted-foreground"}>
-              {isExpired ? "마감됨" : `${daysLeft}일 남음`}
+            <span>
+              {`${Math.ceil((promise.deadline.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))}일 남음`}
             </span>
           </div>
           <div className="text-muted-foreground">
@@ -140,18 +103,30 @@ const PromiseCard = ({ promise, onComplete, onVerify, onClick }: PromiseCardProp
           </div>
         </div>
         
-        {promise.status === "active" && !isExpired && (
+        {promise.status === "active" && (
           <div className="flex space-x-2">
             <Button 
               size="sm" 
-              className="flex-1"
+              className={buttonClasses}
               onClick={(e) => {
                 e.stopPropagation();
                 onComplete?.(promise.id);
               }}
             >
-              <Check className="w-4 h-4 mr-1" />
-              완료 체크
+              <Check className={cn("mr-2 h-4 w-4", isChildMode && "h-6 w-6")} />
+              {isChildMode ? "다 했어요!" : "완료 체크"}
+            </Button>
+            <Button 
+              size="sm" 
+              variant="outline" 
+              className={buttonClasses}
+              onClick={(e) => {
+                e.stopPropagation();
+                onFail?.(promise.id);
+              }}
+            >
+              <X className={cn("mr-2 h-4 w-4", isChildMode && "h-6 w-6")} />
+              {isChildMode ? "못 했어요!" : "실패 체크"}
             </Button>
           </div>
         )}
@@ -160,26 +135,26 @@ const PromiseCard = ({ promise, onComplete, onVerify, onClick }: PromiseCardProp
           <div className="flex space-x-2">
             <Button 
               size="sm" 
-              className="flex-1"
+              className={buttonClasses}
               onClick={(e) => {
                 e.stopPropagation();
                 onVerify?.(promise.id, true);
               }}
             >
-              <Check className="w-4 h-4 mr-1" />
-              승인
+              <Check className={cn("mr-2 h-4 w-4", isChildMode && "h-6 w-6")} />
+              {isChildMode ? "좋아!" : "승인"}
             </Button>
             <Button 
               size="sm" 
               variant="outline" 
-              className="flex-1"
+              className={buttonClasses}
               onClick={(e) => {
                 e.stopPropagation();
                 onVerify?.(promise.id, false);
               }}
             >
-              <X className="w-4 h-4 mr-1" />
-              거절
+              <X className={cn("mr-2 h-4 w-4", isChildMode && "h-6 w-6")} />
+              {isChildMode ? "싫어!" : "거절"}
             </Button>
           </div>
         )}

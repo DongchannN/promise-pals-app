@@ -62,11 +62,33 @@ const mockPromises: Promise[] = [
 ];
 
 const Index = () => {
-  const [promises, setPromises] = useState<Promise[]>(mockPromises);
-  const [familyMembers, setFamilyMembers] = useState<any[]>([
-    { id: 1, name: "김수진", role: "엄마", balance: 45000, isCurrentUser: true },
-    { id: 2, name: "김민준", role: "아들", balance: 12000, isCurrentUser: false }
+  const [promises, setPromises] = useState<Promise[]>(() => {
+    const savedPromises = localStorage.getItem("promises");
+    return savedPromises ? JSON.parse(savedPromises) : mockPromises;
+  });
+
+  const [familyMembers, setFamilyMembers] = useState([
+    {
+      id: 1,
+      name: "김민준",
+      role: "아들",
+      avatar: "🧑",
+      isCurrentUser: false,
+      balance: 12000,
+      userType: "child",
+    },
+    {
+      id: 2,
+      name: "김수진",
+      role: "엄마",
+      avatar: "👩",
+      isCurrentUser: true,
+      balance: 45000,
+      userType: "parent",
+    },
   ]);
+
+  const [viewMode, setViewMode] = useState<"child" | "parent">("parent");
   const [showForm, setShowForm] = useState(false);
   const [selectedPromise, setSelectedPromise] = useState<Promise | null>(null);
   const { toast } = useToast();
@@ -109,7 +131,28 @@ const Index = () => {
           if (member.name === promise.performer) {
             return { ...member, balance: member.balance + promise.rewardAmount };
           }
-        } else {
+        }
+        return member;
+      }));
+      toast({
+        title: "약속 완료! 🌟",
+        description: `₩${promise.rewardAmount.toLocaleString()} ${promise.type === 'reward' ? '보상이 지급' : '패널티가 차감'}되었습니다.`,
+      });
+    }
+  };
+
+  const handleFailPromise = (id: number) => {
+    const promise = promises.find(p => p.id === id);
+    setPromises(prev => 
+      prev.map(promise => 
+        promise.id === id 
+          ? { ...promise, status: "failed" as const }
+          : promise
+      )
+    );
+    if (promise) {
+      setFamilyMembers(prev => prev.map(member => {
+        if (promise.type === "penalty") {
           // 패널티: 실행자 balance 감소
           if (member.name === promise.performer) {
             return { ...member, balance: member.balance - promise.rewardAmount };
@@ -118,8 +161,8 @@ const Index = () => {
         return member;
       }));
       toast({
-        title: "약속 완료! 🌟",
-        description: `₩${promise.rewardAmount.toLocaleString()} ${promise.type === 'reward' ? '보상이 지급' : '패널티가 차감'}되었습니다.`,
+        title: "약속 실패 😢",
+        description: `약속 이행에 실패했습니다. 다음엔 꼭 성공해요!`, 
       });
     }
   };
@@ -174,9 +217,10 @@ const Index = () => {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <Header onCreatePromise={() => setShowForm(false)} />
         <div className="container mx-auto px-4 py-8">
-          <PromiseForm 
+          <PromiseForm
             onSubmit={handleCreatePromise}
             onCancel={() => setShowForm(false)}
+            viewMode={viewMode}
           />
         </div>
       </div>
@@ -185,11 +229,11 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <Header onCreatePromise={() => setShowForm(true)} />
+      <Header onCreatePromise={() => setShowForm(true)} viewMode={viewMode} setViewMode={setViewMode} />
       
       <div className="container mx-auto px-4 py-8 space-y-8">
         {/* Stats Section */}
-        <StatsSection myBalance={myBalance} />
+        <StatsSection myBalance={myBalance} viewMode={viewMode} />
         
         {/* Main Content */}
         <Tabs defaultValue="active" className="w-full">
@@ -216,7 +260,9 @@ const Index = () => {
                     key={promise.id}
                     promise={promise}
                     onComplete={handleCompletePromise}
+                    onFail={handleFailPromise}
                     onClick={handlePromiseClick}
+                    viewMode={viewMode}
                   />
                 ))
               ) : (
@@ -237,6 +283,7 @@ const Index = () => {
                     promise={promise}
                     onVerify={handleVerifyPromise}
                     onClick={handlePromiseClick}
+                    viewMode={viewMode}
                   />
                 ))
               ) : (
@@ -256,6 +303,7 @@ const Index = () => {
                     key={promise.id} 
                     promise={promise} 
                     onClick={handlePromiseClick}
+                    viewMode={viewMode}
                   />
                 ))
               ) : (
@@ -268,7 +316,7 @@ const Index = () => {
           </TabsContent>
 
           <TabsContent value="family" className="space-y-6">
-            <FamilyMembers familyMembers={familyMembersWithStats} />
+            <FamilyMembers familyMembers={familyMembersWithStats} setViewMode={setViewMode} />
           </TabsContent>
         </Tabs>
       </div>
