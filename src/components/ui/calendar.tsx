@@ -1,16 +1,20 @@
 import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DayPicker } from "react-day-picker";
+import { format } from "date-fns";
 
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 
-export type CalendarProps = React.ComponentProps<typeof DayPicker>;
+export type CalendarProps = React.ComponentProps<typeof DayPicker> & {
+  datesWithDots?: Set<string>;
+};
 
 function Calendar({
   className,
   classNames,
   showOutsideDays = true,
+  datesWithDots,
   ...props
 }: CalendarProps) {
   return (
@@ -54,6 +58,18 @@ function Calendar({
       components={{
         IconLeft: ({ ..._props }) => <ChevronLeft className="h-4 w-4" />,
         IconRight: ({ ..._props }) => <ChevronRight className="h-4 w-4" />,
+        DayContent: ({ date }) => {
+          const formattedDate = format(date, "yyyy-MM-dd");
+          const hasDot = datesWithDots?.has(formattedDate);
+          return (
+            <div className="relative h-full w-full flex items-center justify-center">
+              {date.getDate()}
+              {hasDot && (
+                <span className="absolute bottom-1 right-1 h-1 w-1 rounded-full bg-blue-500" />
+              )}
+            </div>
+          );
+        },
       }}
       {...props}
     />

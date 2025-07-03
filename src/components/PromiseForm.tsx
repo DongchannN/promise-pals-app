@@ -19,6 +19,7 @@ interface PromiseFormProps {
   onSubmit: (promiseData: any) => void;
   onCancel: () => void;
   viewMode: "child" | "parent";
+  initialDeadline?: Date;
 }
 
 const mockFamilyMembers = [
@@ -26,7 +27,7 @@ const mockFamilyMembers = [
   { id: 2, name: "김민준", role: "아들", balance: 12000, isCurrentUser: false }
 ];
 
-const PromiseForm = ({ onSubmit, onCancel, viewMode }: PromiseFormProps) => {
+const PromiseForm = ({ onSubmit, onCancel, viewMode, initialDeadline }: PromiseFormProps) => {
   const isChildMode = viewMode === "child";
   const currentUser = mockFamilyMembers.find(member => member.isCurrentUser);
   const otherMembers = mockFamilyMembers.filter(member => !member.isCurrentUser);
@@ -38,7 +39,7 @@ const PromiseForm = ({ onSubmit, onCancel, viewMode }: PromiseFormProps) => {
     creator: currentUser?.name || "", // 자동으로 현재 사용자로 설정
     type: "reward" as "reward" | "penalty",
     amount: "",
-    deadline: undefined as Date | undefined,
+    deadline: initialDeadline || undefined as Date | undefined,
     category: ""
   });
 

@@ -7,6 +7,10 @@ import PromiseForm from "@/components/PromiseForm";
 import FamilyMembers from "@/components/FamilyMembers";
 import StatsSection from "@/components/StatsSection";
 import PromiseDetailModal from "@/components/PromiseDetailModal";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { isSameDay } from "date-fns";
+import { ko } from "date-fns/locale";
 import { Promise } from "@/types/Promise";
 
 // Mock data for demo with proper typing
@@ -91,6 +95,7 @@ const Index = () => {
   const [viewMode, setViewMode] = useState<"child" | "parent">("parent");
   const [showForm, setShowForm] = useState(false);
   const [selectedPromise, setSelectedPromise] = useState<Promise | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const { toast } = useToast();
 
   // Assume logged-in user is 김수진
@@ -196,6 +201,14 @@ const Index = () => {
   const pendingPromises = promises.filter(p => p.status === "pending");
   const completedPromises = promises.filter(p => p.status === "completed" || p.status === "failed");
 
+  const promisesForSelectedDate = selectedDate
+    ? promises.filter(promise =>
+        isSameDay(new Date(promise.deadline), selectedDate)
+      )
+    : [];
+
+  const datesWithPromises = new Set(promises.map(p => format(p.deadline, "yyyy-MM-dd")));
+
   // Add stats to each family member
   const getMemberStats = (memberName: string) => {
     const activePromises = promises.filter(
@@ -237,7 +250,7 @@ const Index = () => {
         
         {/* Main Content */}
         <Tabs defaultValue="active" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-8">
+          <TabsList className="grid w-full grid-cols-5 mb-8">
             <TabsTrigger value="active" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
               진행 중 ({activePromises.length})
             </TabsTrigger>
@@ -249,6 +262,9 @@ const Index = () => {
             </TabsTrigger>
             <TabsTrigger value="family" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
               가족 현황
+            </TabsTrigger>
+            <TabsTrigger value="calendar" className="data-[state=active]:bg-red-500 data-[state=active]:text-white">
+              달력
             </TabsTrigger>
           </TabsList>
 
@@ -317,6 +333,40 @@ const Index = () => {
 
           <TabsContent value="family" className="space-y-6">
             <FamilyMembers familyMembers={familyMembersWithStats} setViewMode={setViewMode} />
+          </TabsContent>
+
+          <TabsContent value="calendar" className="space-y-6">
+            <div className="flex flex-col items-center">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={setSelectedDate}
+                className="rounded-md border shadow"
+                locale={ko}
+                datesWithDots={datesWithPromises}
+              />
+              {selectedDate && (
+                <div className="mt-4 w-full max-w-md">
+                  <h3 className="text-lg font-semibold mb-2">
+                    {format(selectedDate, "yyyy년 M월 d일", { locale: ko })} 약속
+                  </h3>
+                  {promisesForSelectedDate.length > 0 ? (
+                    promisesForSelectedDate.map((promise) => (
+                      <PromiseCard
+                        key={promise.id}
+                        promise={promise}
+                        onComplete={handleCompletePromise}
+                        onFail={handleFailPromise}
+                        onClick={handlePromiseClick}
+                        viewMode={viewMode}
+                      />
+                    ))
+                  ) : (
+                    <p className="text-muted-foreground">선택된 날짜에 약속이 없습니다.</p>
+                  )}
+                </div>
+              )}
+            </div>
           </TabsContent>
         </Tabs>
       </div>
