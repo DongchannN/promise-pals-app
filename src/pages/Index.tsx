@@ -6,8 +6,8 @@ import PromiseCard from "@/components/PromiseCard";
 import PromiseForm from "@/components/PromiseForm";
 import FamilyMembers from "@/components/FamilyMembers";
 import StatsSection from "@/components/StatsSection";
+import PromiseDetailModal from "@/components/PromiseDetailModal";
 import { Promise } from "@/types/Promise";
-import mockFamilyMembers from "../components/FamilyMembers";
 
 // Mock data for demo with proper typing
 const mockPromises: Promise[] = [
@@ -68,6 +68,7 @@ const Index = () => {
     { id: 2, name: "김민준", role: "아들", balance: 12000, isCurrentUser: false }
   ]);
   const [showForm, setShowForm] = useState(false);
+  const [selectedPromise, setSelectedPromise] = useState<Promise | null>(null);
   const { toast } = useToast();
 
   // Assume logged-in user is 김수진
@@ -140,6 +141,14 @@ const Index = () => {
     });
   };
 
+  const handlePromiseClick = (promise: Promise) => {
+    setSelectedPromise(promise);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedPromise(null);
+  };
+
   const activePromises = promises.filter(p => p.status === "active");
   const pendingPromises = promises.filter(p => p.status === "pending");
   const completedPromises = promises.filter(p => p.status === "completed" || p.status === "failed");
@@ -185,16 +194,16 @@ const Index = () => {
         {/* Main Content */}
         <Tabs defaultValue="active" className="w-full">
           <TabsList className="grid w-full grid-cols-4 mb-8">
-            <TabsTrigger value="active" className="data-[state=active]:family-success">
+            <TabsTrigger value="active" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
               진행 중 ({activePromises.length})
             </TabsTrigger>
-            <TabsTrigger value="pending" className="data-[state=active]:family-warning">
+            <TabsTrigger value="pending" className="data-[state=active]:bg-yellow-500 data-[state=active]:text-white">
               승인 대기 ({pendingPromises.length})
             </TabsTrigger>
-            <TabsTrigger value="completed" className="data-[state=active]:family-warm">
+            <TabsTrigger value="completed" className="data-[state=active]:bg-green-500 data-[state=active]:text-white">
               완료된 약속 ({completedPromises.length})
             </TabsTrigger>
-            <TabsTrigger value="family" className="data-[state=active]:family-love">
+            <TabsTrigger value="family" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
               가족 현황
             </TabsTrigger>
           </TabsList>
@@ -207,6 +216,7 @@ const Index = () => {
                     key={promise.id}
                     promise={promise}
                     onComplete={handleCompletePromise}
+                    onClick={handlePromiseClick}
                   />
                 ))
               ) : (
@@ -226,6 +236,7 @@ const Index = () => {
                     key={promise.id}
                     promise={promise}
                     onVerify={handleVerifyPromise}
+                    onClick={handlePromiseClick}
                   />
                 ))
               ) : (
@@ -241,7 +252,11 @@ const Index = () => {
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {completedPromises.length > 0 ? (
                 completedPromises.map((promise) => (
-                  <PromiseCard key={promise.id} promise={promise} />
+                  <PromiseCard 
+                    key={promise.id} 
+                    promise={promise} 
+                    onClick={handlePromiseClick}
+                  />
                 ))
               ) : (
                 <div className="col-span-full text-center py-12">
@@ -257,6 +272,15 @@ const Index = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Promise Detail Modal */}
+      <PromiseDetailModal
+        promise={selectedPromise}
+        isOpen={!!selectedPromise}
+        onClose={handleCloseModal}
+        onComplete={handleCompletePromise}
+        onVerify={handleVerifyPromise}
+      />
     </div>
   );
 };
